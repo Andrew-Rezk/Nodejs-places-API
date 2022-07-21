@@ -1,0 +1,34 @@
+#map {
+  height:380px;
+  width:500px;
+  margin: 10px;
+  float: right;
+}
+
+#address{
+  padding: 10px;
+  margin: 30px !important;
+  margin: auto;
+  width: 50%;
+}
+
+h1, h2 {
+  margin: auto;
+  width: 50%;
+}
+
+.place_name{
+  margin:0%;
+  width: 40%;
+}
+
+ul li{
+  width: 50%;
+  margin: 0;
+}
+
+li {
+  width: 50%;
+  margin: 0;
+}
+

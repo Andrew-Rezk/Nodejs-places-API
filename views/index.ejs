@@ -1,36 +1,39 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>Places Search Box</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    <!-- playground-hide -->
-    <script>
-      const process = { env: {} };
-      process.env.GOOGLE_MAPS_API_KEY =
-        "AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg";
+
+<head>
+  <title></title>
+  <script src="app.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body onload="initialize()">
+
+    <h1>Don't know where to go? </h1>
+    <h2>input your city and check out the list of suggested things!</h2>
+      <form action="/" name="address">
+        <input id="address" type="textbox" value="">
+        <input type="button" value="Search" onclick="codeAddress()">
+      </div>
+
+    <div>
+      <ul>
+        <li>
+          <% places.results.forEach( function (element) { %> 
+            <br>
+            <h2 class="place_name"><%= element.name %></h2>
+            <br>
+            <%= element.address %>
+            <br>  
+            <a><%= element.website %></a>
+            <br>
+            <% }); %>
+        </li>
+    </ul>
+  </div>
+  <div id="map"></div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyD9yKj9LOXFPB8mW9rxxxy2T6IHnjIO7W0&callback=initMap" async defer>
     </script>
-    <!-- playground-hide-end -->
+</body>
 
-    <link rel="stylesheet" type="text/css" href="./style.css" />
-    <script type="module" src="./index.js"></script>
-  </head>
-  <body>
-    <input
-      id="pac-input"
-      class="controls"
-      type="text"
-      placeholder="Search Box"
-    />
-    <div id="map"></div>
-
-    <!-- 
-     The `defer` attribute causes the callback to execute after the full HTML
-     document has been parsed. For non-blocking uses, avoiding race conditions,
-     and consistent behavior across browsers, consider loading using Promises
-     with https://www.npmjs.com/package/@googlemaps/js-api-loader.
-    -->
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initAutocomplete&libraries=places&v=weekly"
-      defer
-    ></script>
-  </body>
 </html>
