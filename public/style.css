@@ -1,8 +1,8 @@
 #map {
   height:380px;
   width:500px;
-  margin: 10px;
-  float: right;
+  /* margin: 10px; */
+  /* float: right; */
 }
 
 #address{
@@ -32,3 +32,6 @@ li {
   margin: 0;
 }
 
+a{
+  max-width: 50%;
+}

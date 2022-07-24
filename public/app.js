@@ -14,7 +14,7 @@ function initMap() {
 }
 
 
-function initialize() {
+ function initialize() {
   geocoder = new google.maps.Geocoder();
   var latlng = new google.maps.LatLng(43.6532, -79.3832);
   var mapOptions = {
@@ -27,7 +27,7 @@ function initialize() {
 
 var lat = '';
 var lng = '';
-function codeAddress() {
+ function codeAddress() {
 var address = document.getElementById('address').value;
 geocoder.geocode( { 'address': address}, function(results, status) {
     if (status == 'OK') {
@@ -42,7 +42,5 @@ geocoder.geocode( { 'address': address}, function(results, status) {
       alert('Geocode was not successful for the following reason: ' + status);
     }
   });
-  alert('Latitude: ' + lat + ' Logitude: ' + lng);
-  console.log(lat);
 }
 
