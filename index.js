@@ -1,9 +1,8 @@
 const express = require("express");
 const path = require("path");
 const axios = require("axios");
-const qs = require("querystring"); //built-in querystring module for manipulating query strings
-const ejs = require("ejs");
-var bodyParser = require('body-parser');
+const qs = require("querystring"); 
+const bodyParser = require('body-parser');
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -17,8 +16,9 @@ app.set("view engine", "ejs");
 
 //set up static path (for use with CSS, client-side JS, and image files)
 app.use(express.static(path.join(__dirname, "public")));
+app.use(express.json());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+const urlencodedParser = app.use(bodyParser.urlencoded({ extended: true }));
 
 
 //HTTP server listening
@@ -26,92 +26,72 @@ app.listen(port, () => {
   console.log(`Listening on http://localhost:${port}`);
 });
 
-app.get("/", (req, res) => {
-  // getGeo();
-  getPlaces(res);
+// `await` can only be used in `async` functions
+// `async` was added here
+app.get("/", async (req, res) => {
+ 
+  const inputLocation = 'toronto';
+  const userInput = req.body;
+  console.log(userInput);
+  
+
+ 
+  const { latitude, longitude } = await getCoordinates(inputLocation);
+
+  // Get places from the coordinates
+  const response = await getPlaces(latitude, longitude);
+
+  // Render result here
+  res.render("index", { places: response.data });
 });
 
-var lat;
-var lng;
-
-function getPlaces(res){
-
+// Functions should only do one thing
+// Rendering should not be in this function
+// This way it is reusable anywhere in the code, or in other projects
+async function getPlaces(latitude, longitude) {
   const options = {
     method: 'GET',
     url: 'https://trueway-places.p.rapidapi.com/FindPlacesNearby',
-    params: {location: `${lat},${lng}`, type: 'cafe', radius: '150', language: 'en'},
+    params: { location: `${latitude},${longitude}`, type: 'park', radius: '150', language: 'en' },
     headers: {
       'X-RapidAPI-Key': '49b3d82605msh88c216e62d3770cp13f60cjsnec91372acf2e',
       'X-RapidAPI-Host': 'trueway-places.p.rapidapi.com'
     }
   };
-  
-  axios.request(options).then(function (response) {
-    console.log(response.data);
-    res.render("index", {places: response.data})
-  }).catch(function (error) {
-    console.error(error);
-  });
 
-  const options2 = {
+  // Old way: Promises with `.then` and `.catch`
+  // This sucks, please learn async/await
+  return axios.request(options).then(response => {
+    return response;
+  }).catch(error => {
+    console.error(error);
+    return null;
+  })
+}
+
+// `await` can only be used in `async` functions
+async function getCoordinates(location) {
+  const options = {
     method: 'GET',
     url: 'https://trueway-geocoding.p.rapidapi.com/Geocode',
-    params: {address: 'toronto, ontario', language: 'en'},
+    params: { address: location, language: 'en' },
     headers: {
       'X-RapidAPI-Key': '49b3d82605msh88c216e62d3770cp13f60cjsnec91372acf2e',
       'X-RapidAPI-Host': 'trueway-geocoding.p.rapidapi.com'
     }
   };
-  
-  axios.request(options2).then(function (response) {
-    lat = response.data.results[0].location.lat;
-    lng = response.data.results[0].location.lng;
-    console.log(lat, lng);
-  })
-  
+
+  try {
+    // As you can see async/await is better
+    const response = await axios.request(options);
+
+    const latitude = response.data.results[0].location.lat;
+    const longitude = response.data.results[0].location.lng;
+
+    return { latitude, longitude };
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 }
 
-// function getData(res) { 
-//   var promiseArr = []
-//   var options = {
-//   method: 'GET',
-//   uri: 'https://trueway-places.p.rapidapi.com/FindPlacesNearby',
-//   params: {location: `${lat},${lng}`, type: 'cafe', radius: '150', language: 'en'},
-//   headers: {
-//     'X-RapidAPI-Key': '49b3d82605msh88c216e62d3770cp13f60cjsnec91372acf2e',
-//     'X-RapidAPI-Host': 'trueway-places.p.rapidapi.com'
-//     }
-//   };
-//   request(options).then(function(apires){
-//      console.log("complete 1");
-//      res.render("index", {places: response.data})
-//       var obj = JSON.parse(apires);
-//       obj.data.forEach(function(entry) {        
-//           var p = findMore(entry.id)
-//           promiseArr.push(p)
-//       });
-//   }).then(function(){
-//              Promise.all(promiseArr).then(function(){
-//              console.log("this is all done")
-//              })
-//           })
-// }
-
-
-// function findMore(id) {
-//   var options = {
-//   method: 'GET',
-//   uri: 'https://trueway-geocoding.p.rapidapi.com/Geocode',
-//     params: {address: 'Cairo, Egypt', language: 'en'},
-//     headers: {
-//       'X-RapidAPI-Key': '49b3d82605msh88c216e62d3770cp13f60cjsnec91372acf2e',
-//       'X-RapidAPI-Host': 'trueway-geocoding.p.rapidapi.com'
-//     }
-//   };
-//   return request(options).then(function(apires){
-//      console.log("complete 2");
-//       var obj = JSON.parse(apires);
-//       lat = response.data.results[0].location.lat;
-//     lng = response.data.results[0].location.lng;
-//   })
-// }
