@@ -29,12 +29,12 @@ app.listen(port, () => {
 // `await` can only be used in `async` functions
 // `async` was added here
 app.get("/", async (req, res) => {
- 
-  const inputLocation = 'toronto';
-  const userInput = req.body;
+  inputLocation = "toronto";
+  const userInput = req.query.address;
+  if (userInput != ""){
+    inputLocation = userInput;
+  }
   console.log(userInput);
-  
-
  
   const { latitude, longitude } = await getCoordinates(inputLocation);
 
@@ -52,7 +52,7 @@ async function getPlaces(latitude, longitude) {
   const options = {
     method: 'GET',
     url: 'https://trueway-places.p.rapidapi.com/FindPlacesNearby',
-    params: { location: `${latitude},${longitude}`, type: 'park', radius: '150', language: 'en' },
+    params: { location: `${latitude},${longitude}`, type: 'cafe', radius: '150', language: 'en' },
     headers: {
       'X-RapidAPI-Key': '49b3d82605msh88c216e62d3770cp13f60cjsnec91372acf2e',
       'X-RapidAPI-Host': 'trueway-places.p.rapidapi.com'

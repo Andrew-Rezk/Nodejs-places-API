@@ -1,5 +1,7 @@
 var geocoder;
 var map;
+var lat = '';
+var lng = '';
 
 function initMap() {
   var map = new google.maps.Map(document.getElementById('map'), {
@@ -18,15 +20,12 @@ function initMap() {
   geocoder = new google.maps.Geocoder();
   var latlng = new google.maps.LatLng(43.6532, -79.3832);
   var mapOptions = {
-    zoom: 8,
+    zoom: 12,
     center: latlng
   }
   map = new google.maps.Map(document.getElementById('map'), mapOptions);
 }
 
-
-var lat = '';
-var lng = '';
  function codeAddress() {
 var address = document.getElementById('address').value;
 geocoder.geocode( { 'address': address}, function(results, status) {
@@ -43,4 +42,5 @@ geocoder.geocode( { 'address': address}, function(results, status) {
     }
   });
 }
+
 
